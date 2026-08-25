@@ -2,7 +2,7 @@
 #define NEX_SSAO_GLSL
 #include "/lib/config.glsl"
 #include "/lib/common.glsl"
-uniform sampler2D depthtex0; uniform mat4 gbufferProjectionInverse; uniform float viewWidth; uniform float viewHeight; uniform float near; uniform float far;
+#include "/lib/uniforms.glsl"
 float computeSSAO(vec2 uv,float depth){
  #if SSAO_ENABLED == 0
  return 1.0;

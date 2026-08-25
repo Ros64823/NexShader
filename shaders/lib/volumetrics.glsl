@@ -2,7 +2,7 @@
 #define NEX_VOLUMETRICS_GLSL
 #include "/lib/config.glsl"
 #include "/lib/common.glsl"
-uniform vec3 sunPosition;
+#include "/lib/uniforms.glsl"
 float godRays(vec2 uv){
  #if VOLUMETRIC_ENABLED == 0
  return 0.0;
