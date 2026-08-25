@@ -2,10 +2,7 @@
 #define NEX_SHADOWS_GLSL
 #include "/lib/config.glsl"
 #include "/lib/common.glsl"
-uniform sampler2DShadow shadowtex0;
-uniform mat4 shadowModelView;
-uniform mat4 shadowProjection;
-uniform mat4 gbufferModelViewInverse;
+#include "/lib/uniforms.glsl"
 float shadowVisibility(vec3 viewPos, vec3 normal, vec3 lightDir){
  vec4 wp=gbufferModelViewInverse*vec4(viewPos,1.0); vec4 sp=shadowProjection*(shadowModelView*wp); sp.xyz=sp.xyz*0.5+0.5;
  if(sp.x<0.0||sp.x>1.0||sp.y<0.0||sp.y>1.0||sp.z<0.0||sp.z>1.0) return 1.0;

@@ -2,7 +2,7 @@
 #define NEX_BLOOM_GLSL
 #include "/lib/config.glsl"
 #include "/lib/common.glsl"
-uniform sampler2D colortex0; uniform float viewWidth; uniform float viewHeight;
+#include "/lib/uniforms.glsl"
 vec3 bloom(vec2 uv){
  #if BLOOM_ENABLED == 0
  return vec3(0.0);

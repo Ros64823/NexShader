@@ -2,7 +2,7 @@
 #define NEX_REFLECTIONS_GLSL
 #include "/lib/config.glsl"
 #include "/lib/common.glsl"
-uniform sampler2D colortex0;
+#include "/lib/uniforms.glsl"
 vec3 screenReflection(vec2 uv, vec3 base, float strength){
  #if SSR_ENABLED == 0
  return base;

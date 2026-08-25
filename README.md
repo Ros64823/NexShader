@@ -60,3 +60,13 @@ Las opciones principales expuestas son: `QUALITY_PROFILE`, `SHADOW_RESOLUTION`, 
 - SSR es una aproximación barata y no sustituye trazado físico completo.
 - Las nubes se mantienen compatibles con el pipeline vanilla/Iris y se mejoran principalmente mediante cielo, fog y color.
 - La validación final debe hacerse dentro de Minecraft/Iris porque la disponibilidad exacta de uniforms puede variar entre versiones.
+
+## Tests
+
+Para validar todos los programas GLSL y ejecutar las pruebas numéricas de las librerías:
+
+```bash
+python -m pip install -r requirements-dev.txt
+python tools/validate_shaders.py
+pytest -q
+```

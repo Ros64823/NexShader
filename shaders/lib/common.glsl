@@ -1,5 +1,6 @@
 #ifndef NEX_COMMON_GLSL
 #define NEX_COMMON_GLSL
+#include "/lib/uniforms.glsl"
 #define saturate(x) clamp(x, 0.0, 1.0)
 float luma(vec3 c){return dot(c, vec3(0.2126,0.7152,0.0722));}
 float hash12(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
