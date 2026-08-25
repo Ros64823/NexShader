@@ -1,0 +1,18 @@
+name: validate-shaders
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  glsl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install glslang
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y glslang-tools
+      - name: Compile every program for every quality profile
+        run: python3 tools/validate_shaders.py

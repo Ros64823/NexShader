@@ -55,6 +55,29 @@ Recomendaciones:
 
 Las opciones principales expuestas son: `QUALITY_PROFILE`, `SHADOW_RESOLUTION`, `SHADOW_SAMPLES`, `SHADOW_FILTER`, `SSAO_ENABLED`, `SSAO_SAMPLES`, `SSR_ENABLED`, `SSR_SAMPLES`, `VOLUMETRIC_ENABLED`, `VOLUMETRIC_STEPS`, `BLOOM_ENABLED`, `BLOOM_QUALITY`, `WATER_QUALITY`, `REFLECTION_QUALITY`, `CLOUD_QUALITY`, `FOG_QUALITY`, `SKY_QUALITY`, `LIGHTING_QUALITY`, `POST_PROCESSING_QUALITY`, `RENDER_SCALE`, `EXPOSURE`, `CONTRAST` y `SATURATION`.
 
+## Robustez numérica
+
+Un shader no puede lanzar una excepción: una división por cero o un `normalize()` de un vector de longitud cero devuelve NaN/Inf, y ese valor se mezcla en los pases siguientes hasta que la pantalla se vuelve negra o blanca sin ningún mensaje de error.
+
+`shaders/lib/safety.glsl` centraliza los guardas usados en todo el pack:
+
+- `safeNormalize(v, fallback)` para vectores que pueden ser nulos (normales del gbuffer, `sunPosition.xy`, dirección de SSR).
+- `nexGuardDenom` / `safeDiv` para denominadores que pueden anularse (`p.w` en `screenToView`, `linearDepth`, resolución de pantalla, tonemapping).
+- `sanitize` antes de escribir en cada render target, de forma que un valor no finito no se propague a `composite`/`final`.
+- `clampScreenUV` para las lecturas en espacio de pantalla, que si no dependen del modo de repetición del buffer.
+
+Todos los guardas eligen un valor visible y documentado (por ejemplo, sin sombra o sin oclusión) en lugar de dejar pasar un resultado indefinido.
+
+## Validación
+
+```bash
+sudo apt-get install -y glslang-tools
+python3 tools/validate_shaders.py            # todos los perfiles
+python3 tools/validate_shaders.py --profile NORMAL
+```
+
+El script resuelve los `#include` como hace Iris, aplica los valores de cada perfil de `shaders.properties` y compila los 16 programas con `glslangValidator`. Iris responde a un error de compilación volviendo al render vanilla, así que sin esta comprobación un programa roto pasa desapercibido. El workflow `.github/workflows/validate-shaders.yml` lo ejecuta en cada push y pull request.
+
 ## Limitaciones
 
 - SSR es una aproximación barata y no sustituye trazado físico completo.
