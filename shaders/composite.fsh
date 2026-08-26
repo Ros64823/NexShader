@@ -22,10 +22,19 @@ void main(){
         vec3 lightDir = normalize(sunPosition);
         float shadow = nexShadowVisibility(viewPos, normal, lightDir);
         float ao = nexComputeSSAO(texcoord, depth);
-        lit = nexApplyLighting(base, normal, shadow, lm) * ao;
+        lit = nexApplyLighting(base, normal, shadow, ao, lm);
         vec3 worldDir = normalize(mat3(gbufferModelViewInverse) * viewPos);
         vec3 sky = nexSkyGradient(worldDir);
         lit = nexApplyFog(lit, viewPos, sky);
+        #if NEX_DEBUG == 1
+            lit = vec3(shadow);
+        #elif NEX_DEBUG == 2
+            lit = vec3(ao);
+        #elif NEX_DEBUG == 3
+            lit = vec3(lm, 0.0);
+        #elif NEX_DEBUG == 4
+            lit = nexAmbientColor(normal, lm);
+        #endif
     }
     gl_FragData[0] = vec4(lit, 1.0);
 }
