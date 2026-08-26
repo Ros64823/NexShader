@@ -2,6 +2,6 @@
 #define NEX_FOG_GLSL
 #include "/lib/config.glsl"
 #include "/lib/common.glsl"
-uniform vec3 fogColor; uniform float far; uniform float rainStrength; uniform int isEyeInWater;
-vec3 applyNexFog(vec3 color, vec3 viewPos, vec3 sky){float dist=length(viewPos); float f=smoothstep(far*(0.25+0.04*float(FOG_QUALITY)),far,dist); f*=0.45+0.07*float(FOG_QUALITY)+rainStrength*0.35; if(isEyeInWater==1) f=max(f,smoothstep(2.0,18.0,dist)*0.75); return mix(color,mix(fogColor,sky,0.45),saturate(f));}
+#include "/lib/uniforms.glsl"
+vec3 nexApplyFog(vec3 color, vec3 viewPos, vec3 sky){float dist = length(viewPos); float start = far * (0.30 + 0.035 * float(FOG_QUALITY)); float fogAmount = smoothstep(start, far, dist) * FOG_DENSITY; fogAmount += rainStrength * smoothstep(far * 0.18, far * 0.70, dist) * 0.35; if (isEyeInWater == 1) fogAmount = max(fogAmount, smoothstep(2.0, 18.0, dist) * 0.75); vec3 fogMix = mix(fogColor, sky, 0.35 + 0.05 * float(SKY_QUALITY)); return mix(color, fogMix, saturate(fogAmount));}
 #endif
