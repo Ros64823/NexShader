@@ -3,7 +3,8 @@
 
 // 0=PATATA, 1=MUY_BAJO, 2=BAJO, 3=MEDIO, 4=NORMAL, 5=ALTO, 6=MUY_ALTO
 #define QUALITY_PROFILE 4 // [0 1 2 3 4 5 6]
-#define NEX_DEBUG 0 // [0 1 2 3 4]
+// 1=shadow 2=direct 3=ambient 4=ssao 5=normals 6=depth 7=lightmap 8=final lighting 9=luminance heatmap
+#define NEX_DEBUG 0 // [0 1 2 3 4 5 6 7 8 9]
 
 #define SHADOW_RESOLUTION 2048 // [512 768 1024 1536 2048 3072 4096]
 #define SHADOW_SAMPLES 6 // [1 2 3 4 6 8 12]

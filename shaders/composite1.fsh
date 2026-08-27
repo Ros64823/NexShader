@@ -13,6 +13,6 @@ void main(){
     vec4 normalData = texture2D(colortex1, texcoord);
     if (normalData.a < 0.75) lit = nexScreenReflection(texcoord, lit, 0.6);
     lit += nexBloom(texcoord);
-    lit += nexSunColor() * nexGodRays(texcoord);
+    lit += nexSunColor() * nexGodRays(texcoord) * 0.35;
     gl_FragData[0] = vec4(lit, 1.0);
 }
