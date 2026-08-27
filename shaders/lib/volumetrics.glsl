@@ -3,6 +3,7 @@
 #include "/lib/config.glsl"
 #include "/lib/common.glsl"
 #include "/lib/uniforms.glsl"
+#include "/lib/lighting.glsl"
 float nexGodRays(vec2 uv){
     #if VOLUMETRIC_ENABLED == 0 || VOLUMETRIC_STEPS == 0
         return 0.0;
@@ -20,7 +21,7 @@ float nexGodRays(vec2 uv){
             float d = length(p - sunUv);
             acc += pow(saturate(1.0 - d * 2.15), 2.0);
         }
-        return acc / float(VOLUMETRIC_STEPS) * VOLUMETRIC_STRENGTH * edgeFade * saturate(sunPosition.y / 80.0) * (1.0 - rainStrength * 0.65);
+        return acc / float(VOLUMETRIC_STEPS) * VOLUMETRIC_STRENGTH * edgeFade * nexSunUpFactor() * (1.0 - rainStrength * 0.65);
     #endif
 }
 #endif

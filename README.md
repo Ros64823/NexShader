@@ -56,6 +56,22 @@ Recomendaciones:
 
 Las opciones principales expuestas son: `QUALITY_PROFILE`, `SHADOW_RESOLUTION`, `SHADOW_SAMPLES`, `SHADOW_FILTER`, `SHADOW_STRENGTH`, `SHADOW_BIAS`, `SSAO_ENABLED`, `SSAO_SAMPLES`, `SSAO_STRENGTH`, `SSAO_RADIUS`, `SSR_ENABLED`, `SSR_SAMPLES`, `REFLECTION_STRENGTH`, `VOLUMETRIC_ENABLED`, `VOLUMETRIC_STEPS`, `VOLUMETRIC_STRENGTH`, `BLOOM_ENABLED`, `BLOOM_QUALITY`, `BLOOM_STRENGTH`, `BLOOM_THRESHOLD`, `WATER_QUALITY`, `WATER_OPACITY`, `WATER_WAVE_STRENGTH`, `WATER_TINT_STRENGTH`, `REFLECTION_QUALITY`, `CLOUD_QUALITY`, `CLOUD_STRENGTH`, `FOG_QUALITY`, `FOG_DENSITY`, `SKY_QUALITY`, `LIGHTING_QUALITY`, `POST_PROCESSING_QUALITY`, `EXPOSURE`, `CONTRAST`, `SATURATION`, `VIBRANCE` y `GAMMA`.
 
+## Depuración del oscurecimiento extremo (causa raíz)
+
+Diagnóstico realizado ejecutando el GLSL real del pack de forma headless con `tools/lighting_harness.py` (moderngl + llvmpipe), midiendo la luminancia final por componente en escenarios controlados.
+
+**CAUSA 1 — Iluminación dependiente de la cámara.** `sunPosition` es un vector en *view space* (rota con la cámara). `nexDayFactor`, `sunUp`, el cielo y los volumétricos leían `sunPosition.y` directamente, así que toda la iluminación global cambiaba con la orientación de la cámara.
+**EVIDENCIA:** con el sol fijo a 65°, el mismo píxel de césped soleado pasaba de luminancia final 0.664 (mirando al horizonte) a 0.392 (mirando al suelo/cielo, pitch ±80°): −41% solo por girar la cámara. Al caminar por un bosque mirando al suelo, toda la escena se oscurecía.
+**CORRECCIÓN:** el sol se transforma a espacio mundo (`mat3(gbufferModelViewInverse) * sunPosition`) en `nexSunElevation()`, y todos los factores día/noche, cielo, estrellas y volumétricos usan esa elevación. El cielo (`gbuffers_skybasic`) también pasa a direcciones en espacio mundo.
+**EFECTO:** la luminancia final del mismo píxel varía menos de 0.3% en todo el rango de pitch/yaw (antes 41%).
+
+**CAUSA 2 — Espacios de color mezclados (doble oscurecimiento).** La iluminación multiplicaba el albedo sRGB (no lineal), el resultado pasaba por una curva ACES pensada para entrada lineal, y el valor final se mostraba **sin** codificación sRGB de salida. Mostrar luz lineal sin `pow(1/2.2)` hunde todos los medios tonos: una sombra con luz lineal 0.1 se mostraba como 0.1 en pantalla en lugar de ~0.35. Además, `colortex0` era RGBA8, cuantizando las zonas oscuras.
+**EVIDENCIA:** un tronco lateral en sombra mostraba luminancia 0.124 y una cueva 0.087 (casi negro absoluto) pese a que la luz ambiental calculada no era cero.
+**CORRECCIÓN:** pipeline lineal completo: el albedo se linealiza (`nexSrgbToLinear`) antes de iluminar, la luz se acumula en HDR lineal (`colortex0` ahora RGBA16F), y `nexTonemap` aplica ACES y después codifica a sRGB (`nexLinearToSrgb`). Saturación/contraste operan en espacio de display.
+**EFECTO:** sombra de bosque denso 0.27 → 0.42 de luminancia mostrada conservando textura, sin subir el brillo global ni debilitar las sombras (el sol directo mantiene ~1.8:1 sobre la sombra).
+
+Complementos: adaptación nocturna fija y suave basada solo en la elevación solar (nunca en el contenido de pantalla — no existe autoexposición), y modos `NEX_DEBUG` 1–9 (shadow, direct, ambient, SSAO, normals, depth, lightmap, final, heatmap de luminancia) para diagnóstico in-game.
+
 ## Limitaciones
 
 - SSR es una aproximación barata y no sustituye trazado físico completo.
