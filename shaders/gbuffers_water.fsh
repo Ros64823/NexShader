@@ -1,5 +1,6 @@
 #version 120
 /* DRAWBUFFERS:012 */
+#include "/lib/config.glsl"
 #include "/lib/common.glsl"
 #include "/lib/uniforms.glsl"
 #include "/lib/water.glsl"
