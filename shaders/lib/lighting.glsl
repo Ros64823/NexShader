@@ -4,8 +4,10 @@
 #include "/lib/common.glsl"
 #include "/lib/uniforms.glsl"
 
+// Use normalized sun direction for stable day/night calculations
 float nexDayFactor() {
-    return saturate(sunPosition.y / 100.0);
+    vec3 sunDir = normalize(sunPosition);
+    return saturate(sunDir.y * 0.5 + 0.5);
 }
 
 vec3 nexSunColor() {
@@ -28,11 +30,11 @@ vec3 nexAmbientColor(vec3 normal, vec2 lm) {
 }
 
 vec3 nexApplyLighting(vec3 albedo, vec3 normal, float shadow, float ao, vec2 lm) {
-    vec3 lightDir = normalize(sunPosition);
-    float ndl = saturate(dot(normal, lightDir));
-    float wrap = saturate((dot(normal, lightDir) + 0.40) / 1.40);
+    vec3 sunDir = normalize(sunPosition);
+    float ndl = saturate(dot(normal, sunDir));
+    float wrap = saturate((dot(normal, sunDir) + 0.40) / 1.40);
     float skyGate = smoothstep(0.05, 0.55, lm.y);
-    float sunUp = saturate(sunPosition.y / 20.0);
+    float sunUp = saturate(sunDir.y);
     float shadowTerm = mix(1.0, shadow, SHADOW_STRENGTH);
     
     vec3 sun = nexSunColor();

@@ -28,7 +28,9 @@ float nexGodRays(vec2 uv) {
             acc += pow(saturate(1.0 - d * 2.15), 2.0);
         }
         
-        return acc / float(VOLUMETRIC_STEPS) * VOLUMETRIC_STRENGTH * edgeFade * saturate(sunPosition.y / 80.0) * (1.0 - rainStrength * 0.65);
+        vec3 sunDir = normalize(sunPosition);
+        float sunFactor = saturate(sunDir.y);
+        return acc / float(VOLUMETRIC_STEPS) * VOLUMETRIC_STRENGTH * edgeFade * sunFactor * (1.0 - rainStrength * 0.65);
     #endif
 }
 
