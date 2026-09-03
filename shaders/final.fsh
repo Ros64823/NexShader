@@ -1,4 +1,5 @@
 #version 120
+#include "/lib/common.glsl"
 #include "/lib/uniforms.glsl"
 #include "/lib/tonemapping.glsl"
 varying vec2 texcoord;
