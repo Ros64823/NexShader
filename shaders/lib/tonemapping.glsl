@@ -14,12 +14,13 @@ vec3 nexTonemap(vec3 color) {
     float y = nexLuma(color);
     float satBoost = SATURATION + (1.0 - y) * VIBRANCE;
     color = mix(vec3(y), color, satBoost);
-    
-    // Apply contrast with shadow protection
-    float shadowProtect = smoothstep(0.0, 0.28, y);
+
+    // Apply gentle contrast with mild shadow preservation
+    float shadowProtect = smoothstep(0.0, 0.25, y);
     float effContrast = mix(1.0, CONTRAST, shadowProtect);
-    color = saturate((color - 0.42) * effContrast + 0.42);
-    
+    // Avoid hard offsets that produce black crush; apply contrast around small mid-gray pivot
+    color = saturate((color - 0.05) * effContrast + 0.05);
+
     // Apply gamma correction
     color = pow(color, vec3(1.0 / GAMMA));
     
