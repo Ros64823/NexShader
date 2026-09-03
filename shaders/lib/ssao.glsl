@@ -17,7 +17,8 @@ float nexComputeSSAO(vec2 uv, float depth){
             vec2 o = vec2(cos(a), sin(a)) * pixel * radius * (1.0 + fi * 0.35);
             float sampleDepth = nexLinearDepth(texture2D(depthtex0, nexSafeUv(uv + o)).r, near, far);
             float delta = center - sampleDepth;
-            occ += step(0.0015, delta) * smoothstep(0.06, 0.0, abs(delta));
+            // If the sample is closer than the center, measure occlusion; soften contribution with smoothstep
+            occ += step(0.0015, delta) * smoothstep(0.0, 0.06, abs(delta));
         }
         return saturate(1.0 - (occ / float(SSAO_SAMPLES)) * SSAO_STRENGTH);
     #endif
