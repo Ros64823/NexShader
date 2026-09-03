@@ -10,9 +10,9 @@ void main(){
     vec4 albedo = texture2D(texture, texcoord) * color;
         // Wind offset for alpha-tested entity textures (leaves, banners, etc.)
         if (albedo.a < 0.99) {
-            float windAmp = 0.004 * (1.0 + float(WATER_QUALITY) * 0.02);
-            float phase = texcoord.x * 12.0 + frameTimeCounter * 0.03;
-            vec2 offset = vec2(sin(phase), cos(phase * 1.2)) * windAmp;
+            float windAmp = 0.0016 * (1.0 + float(WATER_QUALITY) * 0.01);
+            float phase = texcoord.x * 10.0 + frameTimeCounter * 0.025;
+            vec2 offset = vec2(sin(phase), cos(phase * 1.18)) * windAmp;
             albedo = texture2D(texture, nexSafeUv(texcoord + offset)) * color;
         }
         if (albedo.a < 0.10) discard;

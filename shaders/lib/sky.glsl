@@ -7,7 +7,7 @@
 vec3 nexSkyGradient(vec3 dir) {
     float h = saturate(dir.y * 0.5 + 0.5);
     vec3 sunDir = normalize(sunPosition);
-    float day = saturate(sunDir.y * 0.5 + 0.5);
+    float day = saturate(sunDir.y);
     vec3 night = mix(vec3(0.006, 0.009, 0.025), vec3(0.025, 0.040, 0.080), h);
     vec3 daySky = mix(vec3(0.58, 0.72, 0.90), vec3(0.17, 0.34, 0.62), h);
     float sunDot = saturate(dot(dir, sunDir));

@@ -10,9 +10,9 @@ void main(){
     vec4 albedo = texture2D(texture, texcoord) * color;
         // Simple wind animation for alpha-tested (foliage) materials
         if (albedo.a < 0.99) {
-            float windAmp = 0.003 * (1.0 + float(WATER_QUALITY) * 0.02);
-            float phase = texcoord.x * 10.0 + frameTimeCounter * 0.025;
-            vec2 offset = vec2(sin(phase), cos(phase * 1.3)) * windAmp;
+            float windAmp = 0.0012 * (1.0 + float(WATER_QUALITY) * 0.01);
+            float phase = texcoord.x * 8.0 + frameTimeCounter * 0.02;
+            vec2 offset = vec2(sin(phase), cos(phase * 1.25)) * windAmp;
             albedo = texture2D(texture, nexSafeUv(texcoord + offset)) * color;
         }
         if (albedo.a < 0.10) discard;

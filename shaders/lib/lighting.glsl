@@ -7,7 +7,7 @@
 // Use normalized sun direction for stable day/night calculations
 float nexDayFactor() {
     vec3 sunDir = normalize(sunPosition);
-    return saturate(sunDir.y * 0.5 + 0.5);
+    return saturate(sunDir.y);
 }
 
 vec3 nexSunColor() {
